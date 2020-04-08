@@ -4,3 +4,4 @@ project(dir_engine)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(dir_engine main.cpp)
+
