@@ -41,6 +41,7 @@ public:
 // A static Variable which will point to current directory
 
 int main() {
+    //Creating root directory with parent as null
     auto *root = new Directory(nullptr, "/");
     int choice;
     //TODO: Main function implementation
