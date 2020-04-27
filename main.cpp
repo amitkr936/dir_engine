@@ -2,6 +2,7 @@
 #include <vector> //dynamically allocated list
 #include<string> // for string class
 
+
 using namespace std;
 
 //Declaring classes as these have inter-dependency
@@ -42,8 +43,10 @@ public:
 
 int main() {
     //Creating root directory with parent as null
+    string command;
     auto *root = new Directory(nullptr, "/");
     int choice;
+   // <vector> string[] results;
     //TODO: Main function implementation
     do {
         std::cout
@@ -53,6 +56,7 @@ int main() {
         //By default create Root Directory must be created
         switch (choice) {
             case 1:
+               // createdir();
                 //TODO: Create a Directory(Node Arbitrary Children)
                 break;
             case 2:
@@ -73,4 +77,32 @@ int main() {
                 break;
         }
     } while (true);
+   /* while(true)
+    {
+
+     cout<<"direngin<$>";
+     getline(cin,command);
+//     removeDupWord
+
+    }*/
+
+
 }
+/*
+void removeDupWord(string str)
+{
+    string word = "";
+    for (auto x : str)
+    {
+        if (x == ' ')
+        {
+            cout << word << endl;
+            word = "";
+        }
+        else
+        {
+            word = word + x;
+        }
+    }
+    cout << word << endl;
+}*/
