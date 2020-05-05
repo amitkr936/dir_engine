@@ -20,6 +20,12 @@ public:
         this->name = name;
     }
     //TODO: Other properties of file
+
+    static void deleteFile(File* file)
+    {
+        file->parent = NULL;
+        free(file);
+    }
 };
 
 // Structure of a Directory
@@ -35,6 +41,32 @@ public:
     Directory(Directory *parent, string name) {
         this->parent = parent;
         this->name = name;
+    }
+
+    static void deleteDirectory(Directory* dir)
+    {
+        if(dir->child_dir.size() == 0 && dir->child_file.size() == 0)
+        {
+            dir->parent = NULL;
+            free(dir);
+            return;
+        }
+
+        if(dir->child_dir.size() > 0)
+        {
+            for(vector<Directory*>::iterator i = dir->child_dir.begin(); i != dir->child_dir.end(); ++i)
+            {
+                deleteDirectory(*i);
+            }
+        }
+
+        if(dir->child_file.size() > 0)
+        {
+            for(vector<File*>::iterator i = dir->child_file.begin(); i != dir->child_file.end(); ++i)
+            {
+                File::deleteFile(*i);
+            }
+        }
     }
 };
 
