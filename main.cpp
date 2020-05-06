@@ -5,7 +5,6 @@
 
 using namespace std;
 
-
 //Declaring classes as these have inter-dependency
 class File;
 
@@ -22,6 +21,12 @@ public:
         this->name = name;
     }
     //TODO: Other properties of file
+
+    static void deleteFile(File* file)
+    {
+        file->parent = NULL;
+        free(file);
+    }
 };
 
 // Structure of a Directory
@@ -34,36 +39,44 @@ public:
     vector<Directory *> child_dir;
     vector<File *> child_file;
 
-    public: Directory(Directory ** parent, string name) {
-        this->parent = *parent;
+    Directory(Directory *parent, string name) {
+        this->parent = parent;
         this->name = name;
     }
 
+    static void deleteDirectory(Directory* dir)
+    {
+        if(dir->child_dir.size() == 0 && dir->child_file.size() == 0)
+        {
+            dir->parent = NULL;
+            free(dir);
+            return;
+        }
+
+        if(dir->child_dir.size() > 0)
+        {
+            for(vector<Directory*>::iterator i = dir->child_dir.begin(); i != dir->child_dir.end(); ++i)
+            {
+                deleteDirectory(*i);
+            }
+        }
+
+        if(dir->child_file.size() > 0)
+        {
+            for(vector<File*>::iterator i = dir->child_file.begin(); i != dir->child_file.end(); ++i)
+            {
+                File::deleteFile(*i);
+            }
+        }
+    }
 };
 
-
-// a global pointer to point to the current directory
-
-Directory *current_dir;
 // A static Variable which will point to current directory
 
-
-void createdir()//method to create a
-{
-    string dir_name;
-    cout << "Enter Directory Name" << endl;
-    cin >> dir_name;
-    cout << dir_name << endl;
-    Directory* new_dir = new Directory(reinterpret_cast<Directory **>(current_dir), dir_name);
-    current_dir = new_dir;
-    //  Directory dir = new Directory();
-
-}
 int main() {
     //Creating root directory with parent as null
     string command;
     auto *root = new Directory(nullptr, "/");
-     current_dir = root;
     int choice;
    // <vector> string[] results;
     //TODO: Main function implementation
@@ -71,12 +84,11 @@ int main() {
         std::cout
                 << "Enter your Choice:\n 1:Create A directory \n 2: Create File \n 3:Move to upper Level of the tree \n 4: Move to Lower Level  \n 5:Traverse the tree"
                 << std::endl;
-        cin >> choice;
+        std::cin >> choice;
         //By default create Root Directory must be created
         switch (choice) {
             case 1:
-                //Directory.createdir();// for test case execution we will call a Function which will create an Object Instance
-                createdir();
+               // createdir();
                 //TODO: Create a Directory(Node Arbitrary Children)
                 break;
             case 2:
@@ -90,9 +102,6 @@ int main() {
                 break;
             case 5:
                 //TODO: Traverse the while tree(In-order traversal)
-                break;
-            case 6:
-                cout << current_dir->name << endl;
                 break;
             default:
                 //TODO: Handle otherwise
@@ -129,4 +138,3 @@ void removeDupWord(string str)
     }
     cout << word << endl;
 }*/
-
