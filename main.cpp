@@ -1,9 +1,12 @@
 #include <iostream> //for std input/output
 #include <vector> //dynamically allocated list
 #include<string> // for string class
+#include<iterator>
 
 
 using namespace std;
+
+string CommandSplit[3];
 
 //Declaring classes as these have inter-dependency
 class File;
@@ -44,7 +47,7 @@ public:
         this->name = name;
     }
 
-    static void deleteDirectory(Directory* dir)
+    static void deleteDirectory(Directory* dir)//function to delete Directory
     {
         if(dir->child_dir.size() == 0 && dir->child_file.size() == 0)
         {
@@ -70,71 +73,51 @@ public:
         }
     }
 };
+void setCommand(string ch)
+{
+    cout << ch << endl;
+    if(ch == "kdir")
+    {
+        cout << "Mkdir" << endl;
 
-// A static Variable which will point to current directory
+    }
+
+}
+
 
 int main() {
     //Creating root directory with parent as null
     string command;
     auto *root = new Directory(nullptr, "/");
     int choice;
-   // <vector> string[] results;
-    //TODO: Main function implementation
-    do {
-        std::cout
-                << "Enter your Choice:\n 1:Create A directory \n 2: Create File \n 3:Move to upper Level of the tree \n 4: Move to Lower Level  \n 5:Traverse the tree"
-                << std::endl;
-        std::cin >> choice;
-        //By default create Root Directory must be created
-        switch (choice) {
-            case 1:
-               // createdir();
-                //TODO: Create a Directory(Node Arbitrary Children)
-                break;
-            case 2:
-                //TODO: Create a File (Node without a Child)
-                break;
-            case 3:
-                //TODO: Move to Higher level Inside implement the method to traverse the current directory get all the child
-                break;
-            case 4:
-                //TODO: Move to Lower Level Inside implement the method to traverse the current directory get all the child
-                break;
-            case 5:
-                //TODO: Traverse the while tree(In-order traversal)
-                break;
-            default:
-                //TODO: Handle otherwise
-                exit(0);
-                break;
-        }
-    } while (true);
-   /* while(true)
+
+    string Array[3];
+
+    while(true)
     {
+        static string ch="";
+        cout << "Enter the Command ><$:::$" << endl;
 
-     cout<<"direngin<$>";
-     getline(cin,command);
-//     removeDupWord
+        static int i;
 
-    }*/
+        while (cin.get() != '\n') {
+            i = 0;
+            cin >> ch;
+            cout << "Inp 1" << endl;
+            cout << ch << endl;
+            setCommand(ch);
+            i++;
 
-
-}
-/*
-void removeDupWord(string str)
-{
-    string word = "";
-    for (auto x : str)
-    {
-        if (x == ' ')
-        {
-            cout << word << endl;
-            word = "";
-        }
-        else
-        {
-            word = word + x;
+            if (ch.find(' ')) {
+                cin >> ch;
+                cout << "Inp 2" << endl;
+                cout << ch << endl;
+                //    Array[i++] = ch;
+                break;
+            }
         }
     }
-    cout << word << endl;
-}*/
+
+
+    return 0;
+}
