@@ -92,7 +92,36 @@ int main() {
     int choice;
 
     string Array[3];
-
+    /*
+     *  do {
+        std::cout
+                << "Enter your Choice:\n 1:Create A directory \n 2: Create File \n 3:Move to upper Level of the tree \n 4: Move to Lower Level  \n 5:Traverse the tree"
+                << std::endl;
+        std::cin >> choice;
+        //By default create Root Directory must be created
+        switch (choice) {
+            case 1:
+               // createdir();
+                //TODO: Create a Directory(Node Arbitrary Children)
+                break;
+            case 2:
+                //TODO: Create a File (Node without a Child)
+                break;
+            case 3:
+                //TODO: Move to Higher level Inside implement the method to traverse the current directory get all the child
+                break;
+            case 4:
+                //TODO: Move to Lower Level Inside implement the method to traverse the current directory get all the child
+                break;
+            case 5:
+                //TODO: Traverse the while tree(In-order traversal)
+                break;
+            default:
+                //TODO: Handle otherwise
+                exit(0);
+                break;
+        }
+    } while (true);*/
     while(true)
     {
         static string ch="";
