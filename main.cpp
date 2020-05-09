@@ -73,13 +73,28 @@ public:
         }
     }
 };
-void setCommand(string ch)
+int setCommand(string ch)
 {
     cout << ch << endl;
     if(ch == "kdir")
     {
         cout << "Mkdir" << endl;
+        //mkdir Function
+        return 1;
 
+    } else if (ch == "s")
+    {
+        cout << "list " << endl;
+        return 1;
+    }
+    else if(ch == "d")
+    {
+        cout << "Cd command" << endl;
+        return 1;
+    } else
+    {
+        cout << "Please Enter Valid Command" << endl;
+        return -1;
     }
 
 }
@@ -134,7 +149,11 @@ int main() {
             cin >> ch;
             cout << "Inp 1" << endl;
             cout << ch << endl;
-            setCommand(ch);
+            int signal  = setCommand(ch);
+            if(signal == -1)//checks if the command is valid or not
+            {
+                break;
+            }
             i++;
 
             if (ch.find(' ')) {
