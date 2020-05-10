@@ -1,6 +1,7 @@
 #include <iostream> //for std input/output
 #include <vector> //dynamically allocated list
 #include<string> // for string class
+#include<conio.h>
 #include<iterator>
 
 
@@ -85,7 +86,8 @@ int setCommand(string ch)
     } else if (ch == "s")
     {
         cout << "list " << endl;
-        return 1;
+        //call ls function()
+         return 0;
     }
     else if(ch == "d")
     {
@@ -101,6 +103,8 @@ int setCommand(string ch)
 
 
 int main() {
+
+    Anfang://goto block in c++
     //Creating root directory with parent as null
     string command;
     auto *root = new Directory(nullptr, "/");
@@ -137,22 +141,35 @@ int main() {
                 break;
         }
     } while (true);*/
+    int ascii_value;
     while(true)
     {
+        char key_stroke;
         static string ch="";
         cout << "Enter the Command ><$:::$" << endl;
-
+        /*key_stroke = getch();
+        ascii_value = key_stroke;
+        if(ascii_value == 72)
+        {
+            cout << "Upper key" << endl;
+        }*/
         static int i;
 
         while (cin.get() != '\n') {
             i = 0;
             cin >> ch;
+
             cout << "Inp 1" << endl;
             cout << ch << endl;
             int signal  = setCommand(ch);
             if(signal == -1)//checks if the command is valid or not
             {
                 break;
+            }
+            if(signal == 0)
+            {
+                goto Anfang;
+
             }
             i++;
 
