@@ -77,25 +77,25 @@ public:
 int setCommand(string ch)
 {
     cout << ch << endl;
-    if(ch == "kdir")
+    if(ch == "mkdir")
     {
         cout << "Mkdir" << endl;
         //mkdir Function
         return 1;
 
-    } else if (ch == "s")
+    } else if (ch == "ls")
     {
         cout << "list " << endl;
         //call ls function()
          return 0;
     }
-    else if(ch == "d")
+    else if(ch == "cd")
     {
         cout << "Cd command" << endl;
         return 1;
     } else
     {
-        cout << "Please Enter Valid Command" << endl;
+        cout << "<Please Enter Valid Command>" << endl;
         return -1;
     }
 
@@ -146,7 +146,7 @@ int main() {
     {
         char key_stroke;
         static string ch="";
-        cout << "Enter the Command ><$:::$" << endl;
+
         /*key_stroke = getch();
         ascii_value = key_stroke;
         if(ascii_value == 72)
@@ -155,8 +155,9 @@ int main() {
         }*/
         static int i;
 
-        while (cin.get() != '\n') {
+        while (getch() != '\n') {
             i = 0;
+            cout << "Enter the Command ><$:::$" << endl;
             cin >> ch;
 
             cout << "Inp 1" << endl;
@@ -168,7 +169,7 @@ int main() {
             }
             if(signal == 0)
             {
-                goto Anfang;
+                goto Anfang;// go to initial start block
 
             }
             i++;
