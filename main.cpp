@@ -65,9 +65,7 @@ public:
 
     static void list(Directory *dir)
     {
-        //TODO: Print all child dir and files
-//        string child_name = ((dir->child_dir))->name;
-//        cout<<child_name<<endl;
+        //TODO: Test ls function
         if(dir->child_dir)
         {
             Directory* dir = dir->child_dir;
@@ -101,20 +99,7 @@ public:
 
     static void deleteDirectory(Directory *dir)//function to delete Directory
     {
-        //TODO:
-//        if (dir->child_dir.size() > 0) {
-//            for (vector<Directory *>::iterator i = dir->child_dir.begin(); i != dir->child_dir.end(); ++i) {
-//                deleteDirectory(*i);
-//            }
-//        }
-//
-//        if (dir->child_file.size() > 0) {
-//            for (vector<File *>::iterator i = dir->child_file.begin(); i != dir->child_file.end(); ++i) {
-//                File::deleteFile(*i);
-//            }
-//        }
-//        dir->parent = nullptr;
-//        delete dir;
+        //TODO: testing
         if(dir->child_dir)
         {
             deleteDirectory(dir->child_dir);
