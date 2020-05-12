@@ -51,12 +51,11 @@ public:
     Directory *next_dir;
     Directory *pre_dir;
 
-    File **child_file;
+    File *child_file;
 
     Directory(Directory *parent, string name) {
         this->parent = parent;
-        this->name = name;
-        cout<<"Created dir with name"<<this->name<<endl;
+        this->name = std::move(name);
         this->child_dir = nullptr;
         this->child_file = nullptr;
         this->next_dir = nullptr;
@@ -73,7 +72,7 @@ public:
         //TODO: Insert into linked list
         parent->child_dir = newDir;
 
-        cout<<"Creating dir under "<<parent->name<<" Directory name "<<((parent->child_dir))->name<<endl;
+        cout << "Creating dir under " << parent->name << " Directory name " << ((parent->child_dir))->name << endl;
     }
 
     static void deleteDirectory(Directory *dir)//function to delete Directory
@@ -98,6 +97,50 @@ public:
 Directory *root = new Directory(nullptr, "/");
 Directory *current_dir = root;
 
+void removeFile(string fileName) {
+    File *head = current_dir->child_file;
+    if(head != nullptr && head->name == fileName){
+        current_dir->child_file = head->next;
+        File::deleteFile(head);
+        return;
+    }
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            if (head->next != nullptr) {
+                head->next->prev = head->prev;
+            }
+            if (head->prev != nullptr) {
+                head->prev->next = head->next;
+            }
+            File::deleteFile(head);
+            return;
+        }
+        head = head->next;
+    }
+    cout << "File with name " << fileName << " not found!" << endl;
+}
+
+void createFile(string fileName) {
+    File *head = current_dir->child_file;
+    if(head == nullptr){
+        current_dir->child_file = File::createFile(current_dir, fileName);
+        return;
+    }
+    File *previous = head;
+    head = head->next;
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            cout << "The file " << fileName << " already exists!" << endl;
+            return;
+        }
+        previous = head;
+        head = head->next;
+    }
+    head = File::createFile(current_dir, fileName);
+    previous->next = head;
+    head->prev = previous;
+}
+
 int identifyCommand(string ch) {
     string argument;
     if (ch == "mkdir") {
@@ -114,6 +157,12 @@ int identifyCommand(string ch) {
         cout << "Cd command" << endl;
         cin >> argument;
         return 1;
+    } else if (ch == "mkfile") {
+        cin >> argument;
+        createFile(argument);
+    } else if (ch == "rm") {
+        cin >> argument;
+        removeFile(argument);
     } else if (ch == "exit") {
         return 0;
     } else {
@@ -137,7 +186,6 @@ int main() {
 
         cout << "Enter the Command >";
         cin >> command;
-        cout << command << endl;
         int signal = identifyCommand(command);
         if (signal == 0)//checks if the command is valid or not
         {
