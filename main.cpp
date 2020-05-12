@@ -62,10 +62,37 @@ public:
         this->pre_dir = nullptr;
     }
 
+    static void list(Directory *dir)
+    {
+        //TODO: Test ls function
+        if(dir->child_dir)
+        {
+            Directory* dir = dir->child_dir;
+            cout<<"Sub-directories"<<endl;
+            while(dir)
+            {
+                string dir_name = dir->name;
+                cout << dir_name << endl;
+                dir = dir->next_dir;
+            }
+        }
+        if(dir->child_file)
+        {
+            cout<<"Files"<<endl;
+            File* file = *(dir->child_file);
+            while(file)
+            {
+                string file_name = file->name;
+                cout<< file_name << endl;
+                dir = dir->next_dir;
+            }
+        }
+
     static void list(Directory *dir) {
         //TODO: Print all child dir and files
         string child_name = ((dir->child_dir))->name;
         cout << child_name << endl;
+
     }
 
     static void createDirectory(Directory *parent, Directory *newDir) {
@@ -77,20 +104,26 @@ public:
 
     static void deleteDirectory(Directory *dir)//function to delete Directory
     {
-        //TODO:
-//        if (dir->child_dir.size() > 0) {
-//            for (vector<Directory *>::iterator i = dir->child_dir.begin(); i != dir->child_dir.end(); ++i) {
-//                deleteDirectory(*i);
-//            }
-//        }
-//
-//        if (dir->child_file.size() > 0) {
-//            for (vector<File *>::iterator i = dir->child_file.begin(); i != dir->child_file.end(); ++i) {
-//                File::deleteFile(*i);
-//            }
-//        }
-//        dir->parent = nullptr;
-//        delete dir;
+        //TODO: testing
+        if(dir->child_dir)
+        {
+            deleteDirectory(dir->child_dir);
+        }
+
+        if(dir->child_file)
+        {
+            File* file = *(dir->child_file), *temp_file;
+            while (file)
+            {
+                temp_file = file->next;
+                File::deleteFile(file);
+                file = temp_file;
+            }
+        }
+        dir->parent = nullptr;
+        dir->next_dir = nullptr;
+        dir->pre_dir = nullptr;
+        delete dir;
     }
 };
 
