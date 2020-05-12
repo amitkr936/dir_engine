@@ -51,7 +51,7 @@ public:
     Directory *next_dir;
     Directory *pre_dir;
 
-    File **child_file;
+    File *child_file;
 
     Directory(Directory *parent, string name) {
         this->parent = parent;
@@ -113,6 +113,50 @@ void changeDirectory(string target) {
         }
         cout << "Could not find the directory with name " << target << endl;
     }
+
+void removeFile(string fileName) {
+    File *head = current_dir->child_file;
+    if(head != nullptr && head->name == fileName){
+        current_dir->child_file = head->next;
+        File::deleteFile(head);
+        return;
+    }
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            if (head->next != nullptr) {
+                head->next->prev = head->prev;
+            }
+            if (head->prev != nullptr) {
+                head->prev->next = head->next;
+            }
+            File::deleteFile(head);
+            return;
+        }
+        head = head->next;
+    }
+    cout << "File with name " << fileName << " not found!" << endl;
+}
+
+void createFile(string fileName) {
+    File *head = current_dir->child_file;
+    if(head == nullptr){
+        current_dir->child_file = File::createFile(current_dir, fileName);
+        return;
+    }
+    File *previous = head;
+    head = head->next;
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            cout << "The file " << fileName << " already exists!" << endl;
+            return;
+        }
+        previous = head;
+        head = head->next;
+    }
+    head = File::createFile(current_dir, fileName);
+    previous->next = head;
+    head->prev = previous;
+
 }
 
 int identifyCommand(string ch) {
@@ -129,6 +173,12 @@ int identifyCommand(string ch) {
         cin >> argument;
         changeDirectory(argument);
         return 1;
+    } else if (ch == "mkfile") {
+        cin >> argument;
+        createFile(argument);
+    } else if (ch == "rm") {
+        cin >> argument;
+        removeFile(argument);
     } else if (ch == "exit") {
         return 0;
     } else {
