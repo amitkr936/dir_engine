@@ -62,10 +62,10 @@ public:
         this->pre_dir = nullptr;
     }
 
-    static void list(Directory *dir){
+    static void list(Directory *dir) {
         //TODO: Print all child dir and files
         string child_name = ((dir->child_dir))->name;
-        cout<<child_name<<endl;
+        cout << child_name << endl;
     }
 
     static void createDirectory(Directory *parent, Directory *newDir) {
@@ -96,6 +96,23 @@ public:
 
 Directory *root = new Directory(nullptr, "/");
 Directory *current_dir = root;
+
+void changeDirectory(string target) {
+    if (target == "..") {
+        if (current_dir->name != "/") {
+            current_dir = current_dir->parent;
+        }
+    } else {
+        Directory *head = current_dir->child_dir;
+        while (head != nullptr) {
+            if (head->name == target) {
+                current_dir = head;
+                return;
+            }
+            head = head->next_dir;
+        }
+        cout << "Could not find the directory with name " << target << endl;
+    }
 
 void removeFile(string fileName) {
     File *head = current_dir->child_file;
@@ -139,6 +156,7 @@ void createFile(string fileName) {
     head = File::createFile(current_dir, fileName);
     previous->next = head;
     head->prev = previous;
+
 }
 
 int identifyCommand(string ch) {
@@ -147,15 +165,13 @@ int identifyCommand(string ch) {
         cin >> argument;
         auto *newDir = new Directory(current_dir, argument);
         Directory::createDirectory(current_dir, newDir);
-
         return 1;
     } else if (ch == "ls") {
-        cout << "list " << endl;
         Directory::list(current_dir);
         return 1;
     } else if (ch == "cd") {
-        cout << "Cd command" << endl;
         cin >> argument;
+        changeDirectory(argument);
         return 1;
     } else if (ch == "mkfile") {
         cin >> argument;
@@ -166,7 +182,7 @@ int identifyCommand(string ch) {
     } else if (ch == "exit") {
         return 0;
     } else {
-        cout << "<Please Enter Valid Command>" << endl;
+        cout << "Invalid command " << ch << "!" << endl;
         return 1;
     }
 }
