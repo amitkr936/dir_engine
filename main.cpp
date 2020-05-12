@@ -55,25 +55,24 @@ public:
 
     Directory(Directory *parent, string name) {
         this->parent = parent;
-        this->name = name;
-        cout<<"Created dir with name"<<this->name<<endl;
+        this->name = std::move(name);
         this->child_dir = nullptr;
         this->child_file = nullptr;
         this->next_dir = nullptr;
         this->pre_dir = nullptr;
     }
 
-    static void list(Directory *dir){
+    static void list(Directory *dir) {
         //TODO: Print all child dir and files
         string child_name = ((dir->child_dir))->name;
-        cout<<child_name<<endl;
+        cout << child_name << endl;
     }
 
     static void createDirectory(Directory *parent, Directory *newDir) {
         //TODO: Insert into linked list
         parent->child_dir = newDir;
 
-        cout<<"Creating dir under "<<parent->name<<" Directory name "<<((parent->child_dir))->name<<endl;
+        cout << "Creating dir under " << parent->name << " Directory name " << ((parent->child_dir))->name << endl;
     }
 
     static void deleteDirectory(Directory *dir)//function to delete Directory
@@ -98,26 +97,42 @@ public:
 Directory *root = new Directory(nullptr, "/");
 Directory *current_dir = root;
 
+void changeDirectory(string target) {
+    if (target == "..") {
+        if (current_dir->name != "/") {
+            current_dir = current_dir->parent;
+        }
+    } else {
+        Directory *head = current_dir->child_dir;
+        while (head != nullptr) {
+            if (head->name == target) {
+                current_dir = head;
+                return;
+            }
+            head = head->next_dir;
+        }
+        cout << "Could not find the directory with name " << target << endl;
+    }
+}
+
 int identifyCommand(string ch) {
     string argument;
     if (ch == "mkdir") {
         cin >> argument;
         auto *newDir = new Directory(current_dir, argument);
         Directory::createDirectory(current_dir, newDir);
-
         return 1;
     } else if (ch == "ls") {
-        cout << "list " << endl;
         Directory::list(current_dir);
         return 1;
     } else if (ch == "cd") {
-        cout << "Cd command" << endl;
         cin >> argument;
+        changeDirectory(argument);
         return 1;
     } else if (ch == "exit") {
         return 0;
     } else {
-        cout << "<Please Enter Valid Command>" << endl;
+        cout << "Invalid command " << ch << "!" << endl;
         return 1;
     }
 }
@@ -137,7 +152,6 @@ int main() {
 
         cout << "Enter the Command >";
         cin >> command;
-        cout << command << endl;
         int signal = identifyCommand(command);
         if (signal == 0)//checks if the command is valid or not
         {
