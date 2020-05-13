@@ -62,15 +62,21 @@ public:
         this->pre_dir = nullptr;
     }
 
+    string getPath() {
+        if (parent == nullptr) return name;
+        else {
+            return parent->getPath() + name + "/";
+        }
+    }
+
     static void list(Directory *dir) {
-        //TODO: Test ls function
         if (dir->child_dir) {
-            Directory *dir = dir->child_dir;
+            Directory *dirHead = dir->child_dir;
             cout << "Sub-directories" << endl;
-            while (dir) {
-                string dir_name = dir->name;
-                cout << dir_name << endl;
-                dir = dir->next_dir;
+            while (dirHead) {
+                string dir_name = dirHead->name;
+                cout << "\t" << dir_name << endl;
+                dirHead = dirHead->next_dir;
             }
         }
         if (dir->child_file) {
@@ -78,24 +84,42 @@ public:
             File *file = (dir->child_file);
             while (file) {
                 string file_name = file->name;
-                cout << file_name << endl;
-                dir = dir->next_dir;
+                cout << "\t" << file_name << endl;
+                file = file->next;
             }
         }
     }
 
-    static void createDirectory(Directory *parent, Directory *newDir) {
-        //TODO: Insert into linked list
-        parent->child_dir = newDir;
-
-        cout << "Creating dir under " << parent->name << " Directory name " << ((parent->child_dir))->name << endl;
+    static void createDirectory(Directory *parent, string directoryName) {
+        Directory *head = parent->child_dir;
+        if (head == nullptr) {
+            parent->child_dir = new Directory(parent, std::move(directoryName));
+            return;
+        }
+        Directory *previous = head;
+        head = head->next_dir;
+        while (head != nullptr) {
+            if (head->name == directoryName) {
+                cout << "The directory " << directoryName << " already exists!" << endl;
+                return;
+            }
+            previous = head;
+            head = head->next_dir;
+        }
+        head = new Directory(parent, directoryName);
+        previous->next_dir = head;
+        head->pre_dir = previous;
     }
 
     static void deleteDirectory(Directory *dir)//function to delete Directory
     {
-        //TODO: testing
         if (dir->child_dir) {
-            deleteDirectory(dir->child_dir);
+            Directory *dirHead = (dir->child_dir), *temp_dir;
+            while (dirHead) {
+                temp_dir = dirHead->next_dir;
+                deleteDirectory(dirHead);
+                dirHead = temp_dir;
+            }
         }
 
         if (dir->child_file) {
@@ -157,6 +181,29 @@ void removeFile(string fileName) {
     cout << "File with name " << fileName << " not found!" << endl;
 }
 
+void removeDirectory(string directoryName) {
+    Directory *head = current_dir->child_dir;
+    if (head != nullptr && head->name == directoryName) {
+        current_dir->child_dir = head->next_dir;
+        Directory::deleteDirectory(head);
+        return;
+    }
+    while (head != nullptr) {
+        if (head->name == directoryName) {
+            if (head->next_dir != nullptr) {
+                head->next_dir->pre_dir = head->pre_dir;
+            }
+            if (head->pre_dir != nullptr) {
+                head->pre_dir->next_dir = head->next_dir;
+            }
+            Directory::deleteDirectory(head);
+            return;
+        }
+        head = head->next_dir;
+    }
+    cout << "Directory with name " << directoryName << " not found!" << endl;
+}
+
 void createFile(string fileName) {
     File *head = current_dir->child_file;
     if (head == nullptr) {
@@ -183,8 +230,11 @@ int identifyCommand(string ch) {
     string argument;
     if (ch == "mkdir") {
         cin >> argument;
-        auto *newDir = new Directory(current_dir, argument);
-        Directory::createDirectory(current_dir, newDir);
+        Directory::createDirectory(current_dir, argument);
+        return 1;
+    } else if (ch == "rmdir") {
+        cin >> argument;
+        removeDirectory(argument);
         return 1;
     } else if (ch == "ls") {
         Directory::list(current_dir);
@@ -220,7 +270,7 @@ int main() {
     while (true) {
         fflush(stdin);
 
-        cout << "Enter the Command >";
+        cout << current_dir->getPath() << " >";
         cin >> command;
         int signal = identifyCommand(command);
         if (signal == 0)//checks if the command is valid or not
