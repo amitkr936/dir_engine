@@ -62,37 +62,26 @@ public:
         this->pre_dir = nullptr;
     }
 
-    static void list(Directory *dir)
-    {
+    static void list(Directory *dir) {
         //TODO: Test ls function
-        if(dir->child_dir)
-        {
-            Directory* dir = dir->child_dir;
-            cout<<"Sub-directories"<<endl;
-            while(dir)
-            {
+        if (dir->child_dir) {
+            Directory *dir = dir->child_dir;
+            cout << "Sub-directories" << endl;
+            while (dir) {
                 string dir_name = dir->name;
                 cout << dir_name << endl;
                 dir = dir->next_dir;
             }
         }
-        if(dir->child_file)
-        {
-            cout<<"Files"<<endl;
-            File* file = *(dir->child_file);
-            while(file)
-            {
+        if (dir->child_file) {
+            cout << "Files" << endl;
+            File *file = (dir->child_file);
+            while (file) {
                 string file_name = file->name;
-                cout<< file_name << endl;
+                cout << file_name << endl;
                 dir = dir->next_dir;
             }
         }
-
-    static void list(Directory *dir) {
-        //TODO: Print all child dir and files
-        string child_name = ((dir->child_dir))->name;
-        cout << child_name << endl;
-
     }
 
     static void createDirectory(Directory *parent, Directory *newDir) {
@@ -105,16 +94,13 @@ public:
     static void deleteDirectory(Directory *dir)//function to delete Directory
     {
         //TODO: testing
-        if(dir->child_dir)
-        {
+        if (dir->child_dir) {
             deleteDirectory(dir->child_dir);
         }
 
-        if(dir->child_file)
-        {
-            File* file = *(dir->child_file), *temp_file;
-            while (file)
-            {
+        if (dir->child_file) {
+            File *file = (dir->child_file), *temp_file;
+            while (file) {
                 temp_file = file->next;
                 File::deleteFile(file);
                 file = temp_file;
@@ -146,10 +132,11 @@ void changeDirectory(string target) {
         }
         cout << "Could not find the directory with name " << target << endl;
     }
+}
 
 void removeFile(string fileName) {
     File *head = current_dir->child_file;
-    if(head != nullptr && head->name == fileName){
+    if (head != nullptr && head->name == fileName) {
         current_dir->child_file = head->next;
         File::deleteFile(head);
         return;
@@ -172,7 +159,7 @@ void removeFile(string fileName) {
 
 void createFile(string fileName) {
     File *head = current_dir->child_file;
-    if(head == nullptr){
+    if (head == nullptr) {
         current_dir->child_file = File::createFile(current_dir, fileName);
         return;
     }
