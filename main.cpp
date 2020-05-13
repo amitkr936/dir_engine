@@ -1,9 +1,10 @@
 #include <iostream> //for std input/output
-#include <vector> //dynamically allocated list
+#include <regex>
 #include<string> // for string class
-
+#include <conio.h>
 
 using namespace std;
+
 
 //Declaring classes as these have inter-dependency
 class File;
@@ -14,18 +15,29 @@ class Directory;
 class File {
 public:
     string name;
+    string data;
     Directory *parent;
+    File *next;
+    File *prev;
 
-    File(Directory *parent, string name) {
+    File(Directory *parent, string name, string data) {
         this->parent = parent;
-        this->name = name;
+        this->name = std::move(name);
+        this->data = std::move(data);
+        this->next = nullptr;
+        this->prev = nullptr;
     }
-    //TODO: Other properties of file
 
-    static void deleteFile(File* file)
-    {
-        file->parent = NULL;
-        free(file);
+    static void deleteFile(File *file) {
+        file->parent = nullptr;
+        file->prev = nullptr;
+        file->next = nullptr;
+
+        delete file;
+    }
+
+    static File *createFile(Directory *parent, string name, string data) {
+        return new File(parent, std::move(name), std::move(data));
     }
 };
 
@@ -36,105 +48,284 @@ public:
     Directory *parent;
 
     //List of child directories and files
-    vector<Directory *> child_dir;
-    vector<File *> child_file;
+    Directory *child_dir;
+    Directory *next_dir;
+    Directory *pre_dir;
+
+    File *child_file;
 
     Directory(Directory *parent, string name) {
         this->parent = parent;
-        this->name = name;
+        this->name = std::move(name);
+        this->child_dir = nullptr;
+        this->child_file = nullptr;
+        this->next_dir = nullptr;
+        this->pre_dir = nullptr;
     }
 
-    static void deleteDirectory(Directory* dir)
-    {
-        if(dir->child_dir.size() == 0 && dir->child_file.size() == 0)
-        {
-            dir->parent = NULL;
-            free(dir);
+    string getPath() {
+        if (parent == nullptr) return name;
+        else {
+            return parent->getPath() + name + "/";
+        }
+    }
+
+    static void list(Directory *dir) {
+        if (dir->child_dir) {
+            Directory *dirHead = dir->child_dir;
+            cout << "Sub-directories" << endl;
+            while (dirHead) {
+                string dir_name = dirHead->name;
+                cout << "\t" << dir_name << endl;
+                dirHead = dirHead->next_dir;
+            }
+        }
+        if (dir->child_file) {
+            cout << "Files" << endl;
+            File *file = (dir->child_file);
+            while (file) {
+                string file_name = file->name;
+                cout << "\t" << file_name << endl;
+                file = file->next;
+            }
+        }
+    }
+
+    static void createDirectory(Directory *parent, string directoryName) {
+        Directory *head = parent->child_dir;
+        if (head == nullptr) {
+            parent->child_dir = new Directory(parent, std::move(directoryName));
             return;
         }
+        Directory *previous = head;
+        head = head->next_dir;
+        while (head != nullptr) {
+            if (head->name == directoryName) {
+                cout << "The directory " << directoryName << " already exists!" << endl;
+                return;
+            }
+            previous = head;
+            head = head->next_dir;
+        }
+        head = new Directory(parent, directoryName);
+        previous->next_dir = head;
+        head->pre_dir = previous;
+    }
 
-        if(dir->child_dir.size() > 0)
-        {
-            for(vector<Directory*>::iterator i = dir->child_dir.begin(); i != dir->child_dir.end(); ++i)
-            {
-                deleteDirectory(*i);
+    static void deleteDirectory(Directory *dir)//function to delete Directory
+    {
+        if (dir->child_dir) {
+            Directory *dirHead = (dir->child_dir), *temp_dir;
+            while (dirHead) {
+                temp_dir = dirHead->next_dir;
+                deleteDirectory(dirHead);
+                dirHead = temp_dir;
             }
         }
 
-        if(dir->child_file.size() > 0)
-        {
-            for(vector<File*>::iterator i = dir->child_file.begin(); i != dir->child_file.end(); ++i)
-            {
-                File::deleteFile(*i);
+        if (dir->child_file) {
+            File *file = (dir->child_file), *temp_file;
+            while (file) {
+                temp_file = file->next;
+                File::deleteFile(file);
+                file = temp_file;
             }
         }
+        dir->parent = nullptr;
+        dir->next_dir = nullptr;
+        dir->pre_dir = nullptr;
+        delete dir;
     }
 };
 
-// A static Variable which will point to current directory
+Directory *root = new Directory(nullptr, "/");
+Directory *current_dir = root;
 
-int main() {
-    //Creating root directory with parent as null
-    string command;
-    auto *root = new Directory(nullptr, "/");
-    int choice;
-   // <vector> string[] results;
-    //TODO: Main function implementation
-    do {
-        std::cout
-                << "Enter your Choice:\n 1:Create A directory \n 2: Create File \n 3:Move to upper Level of the tree \n 4: Move to Lower Level  \n 5:Traverse the tree"
-                << std::endl;
-        std::cin >> choice;
-        //By default create Root Directory must be created
-        switch (choice) {
-            case 1:
-               // createdir();
-                //TODO: Create a Directory(Node Arbitrary Children)
-                break;
-            case 2:
-                //TODO: Create a File (Node without a Child)
-                break;
-            case 3:
-                //TODO: Move to Higher level Inside implement the method to traverse the current directory get all the child
-                break;
-            case 4:
-                //TODO: Move to Lower Level Inside implement the method to traverse the current directory get all the child
-                break;
-            case 5:
-                //TODO: Traverse the while tree(In-order traversal)
-                break;
-            default:
-                //TODO: Handle otherwise
-                exit(0);
-                break;
+void changeDirectory(string target) {
+    if (target == "..") {
+        if (current_dir->name != "/") {
+            current_dir = current_dir->parent;
         }
-    } while (true);
-   /* while(true)
-    {
+    } else {
+        Directory *head = current_dir->child_dir;
+        while (head != nullptr) {
+            if (head->name == target) {
+                current_dir = head;
+                return;
+            }
+            head = head->next_dir;
+        }
+        cout << "Could not find the directory with name " << target << endl;
+    }
+}
 
-     cout<<"direngin<$>";
-     getline(cin,command);
-//     removeDupWord
+void removeFile(string fileName) {
+    File *head = current_dir->child_file;
+    if (head != nullptr && head->name == fileName) {
+        current_dir->child_file = head->next;
+        File::deleteFile(head);
+        return;
+    }
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            if (head->next != nullptr) {
+                head->next->prev = head->prev;
+            }
+            if (head->prev != nullptr) {
+                head->prev->next = head->next;
+            }
+            File::deleteFile(head);
+            return;
+        }
+        head = head->next;
+    }
+    cout << "File with name " << fileName << " not found!" << endl;
+}
 
-    }*/
+void removeDirectory(string directoryName) {
+    Directory *head = current_dir->child_dir;
+    if (head != nullptr && head->name == directoryName) {
+        current_dir->child_dir = head->next_dir;
+        Directory::deleteDirectory(head);
+        return;
+    }
+    while (head != nullptr) {
+        if (head->name == directoryName) {
+            if (head->next_dir != nullptr) {
+                head->next_dir->pre_dir = head->pre_dir;
+            }
+            if (head->pre_dir != nullptr) {
+                head->pre_dir->next_dir = head->next_dir;
+            }
+            Directory::deleteDirectory(head);
+            return;
+        }
+        head = head->next_dir;
+    }
+    cout << "Directory with name " << directoryName << " not found!" << endl;
+}
 
+void createFile(string fileName, string data) {
+    File *head = current_dir->child_file;
+    if (head == nullptr) {
+        current_dir->child_file = File::createFile(current_dir, fileName, data);
+        return;
+    }
+    File *previous = head;
+    head = head->next;
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            cout << "The file " << fileName << " already exists!" << endl;
+            return;
+        }
+        previous = head;
+        head = head->next;
+    }
+    head = File::createFile(current_dir, fileName, data);
+    previous->next = head;
+    head->prev = previous;
 
 }
-/*
-void removeDupWord(string str)
-{
-    string word = "";
-    for (auto x : str)
-    {
-        if (x == ' ')
-        {
-            cout << word << endl;
-            word = "";
+
+void catCommand(string fileName) {
+    File *head = current_dir->child_file;
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            cout << head->data << endl;
+            return;
         }
-        else
+        head = head->next;
+    }
+    cout << "File with name " << fileName << " does not exist!" << endl;
+}
+
+int identifyCommand(string ch) {
+    string argument;
+    regex splchar("[a-zA-Z0-9][a-zA-Z0-9.]*");
+    if (ch == "mkdir") {
+        cin >> argument;
+        if (!regex_match(argument, splchar)) {
+            cout << "Invalid Folder Name" << endl;
+            return 1;
+        }
+
+        Directory::createDirectory(current_dir, argument);
+        return 1;
+
+    } else if (ch == "rmdir") {
+
+        cin >> argument;
+
+        removeDirectory(argument);
+        return 1;
+    } else if (ch == "ls") {
+        Directory::list(current_dir);
+        return 1;
+    } else if (ch == "cd") {
+        cin >> argument;
+        changeDirectory(argument);
+        return 1;
+    } else if (ch == "touch") {
+        cin >> argument;
+        if (!regex_match(argument, splchar)) {
+            cout << "Invalid File Name:" << argument << endl;
+            return 1;
+        }
+        cout << "enter data for the file:" << endl;
+        string data;
+        getchar();
+        getline(cin,data);
+        createFile(argument, data);
+        return 1;
+    } else if (ch == "rm") {
+        cin >> argument;
+        removeFile(argument);
+        return 1;
+    } else if (ch == "exit") {
+        return 0;
+    } else if (ch == "cat") {
+        cin >> argument;
+        catCommand(argument);//function to get contents of a file
+        return 1;
+    } else {
+        cout << "Invalid command " << ch << "!" << endl;
+        return 1;
+    }
+}
+
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+
+
+int main() {
+
+    //Creating root directory with parent as null
+    string command;
+
+    while (true) {
+        //cin.clear();
+        //cin.ignore(INT_MAX, '\n');
+        cin.sync();//clear the buffer
+        cin.clear();// TODO flush the input stream
+
+        cout << current_dir->getPath() << " >";
+        cin >> command;
+        int signal = identifyCommand(command);
+        if (signal == 0)//checks if the command is valid or not
         {
-            word = word + x;
+            break;
         }
     }
-    cout << word << endl;
-}*/
+    return 0;
+}
+
+#pragma clang diagnostic pop
+
+/** ls
+ * cd <path />
+ *  cd ..
+ *  mkdir <dir-name>
+ *  rmdir <dir-name>
+ *  rm <file>
+ *  mkfile <file-name> / touch <file-name>*/
