@@ -246,9 +246,11 @@ int identifyCommand(string ch) {
     } else if (ch == "mkfile") {
         cin >> argument;
         createFile(argument);
+        return 1;
     } else if (ch == "rm") {
         cin >> argument;
         removeFile(argument);
+        return 1;
     } else if (ch == "exit") {
         return 0;
     } else {
