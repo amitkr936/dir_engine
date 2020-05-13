@@ -1,8 +1,7 @@
 #include <iostream> //for std input/output
-#include <utility>
-#include <vector> //dynamically allocated list
+#include <regex>
 #include<string> // for string class
-
+#include <conio.h>
 
 using namespace std;
 
@@ -16,13 +15,15 @@ class Directory;
 class File {
 public:
     string name;
+    string data;
     Directory *parent;
     File *next;
     File *prev;
 
-    File(Directory *parent, string name) {
+    File(Directory *parent, string name, string data) {
         this->parent = parent;
         this->name = std::move(name);
+        this->data = std::move(data);
         this->next = nullptr;
         this->prev = nullptr;
     }
@@ -35,8 +36,8 @@ public:
         delete file;
     }
 
-    static File *createFile(Directory *parent, string name) {
-        return new File(parent, std::move(name));
+    static File *createFile(Directory *parent, string name, string data) {
+        return new File(parent, std::move(name), std::move(data));
     }
 };
 
@@ -204,10 +205,10 @@ void removeDirectory(string directoryName) {
     cout << "Directory with name " << directoryName << " not found!" << endl;
 }
 
-void createFile(string fileName) {
+void createFile(string fileName, string data) {
     File *head = current_dir->child_file;
     if (head == nullptr) {
-        current_dir->child_file = File::createFile(current_dir, fileName);
+        current_dir->child_file = File::createFile(current_dir, fileName, data);
         return;
     }
     File *previous = head;
@@ -220,20 +221,41 @@ void createFile(string fileName) {
         previous = head;
         head = head->next;
     }
-    head = File::createFile(current_dir, fileName);
+    head = File::createFile(current_dir, fileName, data);
     previous->next = head;
     head->prev = previous;
 
 }
 
+void catCommand(string fileName) {
+    File *head = current_dir->child_file;
+    while (head != nullptr) {
+        if (head->name == fileName) {
+            cout << head->data << endl;
+            return;
+        }
+        head = head->next;
+    }
+    cout << "File with name " << fileName << " does not exist!" << endl;
+}
+
 int identifyCommand(string ch) {
     string argument;
+    regex splchar("[a-zA-Z0-9][a-zA-Z0-9.]*");
     if (ch == "mkdir") {
         cin >> argument;
+        if (!regex_match(argument, splchar)) {
+            cout << "Invalid Folder Name" << endl;
+            return 1;
+        }
+
         Directory::createDirectory(current_dir, argument);
         return 1;
+
     } else if (ch == "rmdir") {
+
         cin >> argument;
+
         removeDirectory(argument);
         return 1;
     } else if (ch == "ls") {
@@ -243,9 +265,17 @@ int identifyCommand(string ch) {
         cin >> argument;
         changeDirectory(argument);
         return 1;
-    } else if (ch == "mkfile") {
+    } else if (ch == "touch") {
         cin >> argument;
-        createFile(argument);
+        if (!regex_match(argument, splchar)) {
+            cout << "Invalid File Name:" << argument << endl;
+            return 1;
+        }
+        cout << "enter data for the file:" << endl;
+        string data;
+        getchar();
+        getline(cin,data);
+        createFile(argument, data);
         return 1;
     } else if (ch == "rm") {
         cin >> argument;
@@ -253,6 +283,10 @@ int identifyCommand(string ch) {
         return 1;
     } else if (ch == "exit") {
         return 0;
+    } else if (ch == "cat") {
+        cin >> argument;
+        catCommand(argument);//function to get contents of a file
+        return 1;
     } else {
         cout << "Invalid command " << ch << "!" << endl;
         return 1;
@@ -270,7 +304,10 @@ int main() {
     string command;
 
     while (true) {
-        fflush(stdin);
+        //cin.clear();
+        //cin.ignore(INT_MAX, '\n');
+        cin.sync();//clear the buffer
+        cin.clear();// TODO flush the input stream
 
         cout << current_dir->getPath() << " >";
         cin >> command;
