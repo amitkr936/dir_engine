@@ -1,8 +1,8 @@
-# Dir_Engine #</br>
+# Dir_Engine </br>
 A terminal Simulator making use of Data Structures
-## BITS Pilani WILP Assignment for Data Structure and Algorithms  ##
-### Problem Set ###
-#### Directory structure #### </br>
+## BITS Pilani WILP Assignment for Data Structure and Algorithms  
+### Problem Set
+#### Directory structure  </br>
 <strong>Implement a directory structure consisting of directories, sub-directories and files. The software shall allow user
 to do the following:</strong></br>
  Create directories, sub-directories and files</br>
