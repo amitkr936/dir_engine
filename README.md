@@ -18,4 +18,4 @@ to do the following:</strong></br>
 
                                                       <::Output::>
       <======================================================================================================================>
-      ![Ausgabe](screenshot_direngine.PNG)
+      ![Ausgabe](https://user-images.githubusercontent.com/23555312/81896358-18cd4d00-95d2-11ea-9526-bfdde30dd6da.PNG)
