@@ -10,12 +10,11 @@ to do the following:</strong></br>
  Change directory from one level to the next (up or down)</br>
  Print the contents of a directory
 
->> mkdir -> Create Directory</br>
->> touch -> Create File</br>
->> cd -> change directory</br>
->> rmdir -> remove directory</br>
->> rm -> remove file
+// mkdir -> Create Directory</br>
+// touch -> Create File</br>
+// cd -> change directory</br>
+// rmdir -> remove directory</br>
+// rm -> remove file
 
                                                       <::Output::>
-      <======================================================================================================================>
       ![Ausgabe](https://user-images.githubusercontent.com/23555312/81896358-18cd4d00-95d2-11ea-9526-bfdde30dd6da.PNG)
