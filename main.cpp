@@ -278,7 +278,7 @@ int identifyCommand(string ch) {
         createFile(argument, data);
         return 1;
     } else if (ch == "rm") {
-        cin >> argument;
+        cin >> argument ;
         removeFile(argument);
         return 1;
     } else if (ch == "exit") {
