@@ -18,4 +18,4 @@ to do the following:</strong></br>
 
                                                       <::Output::>
       <======================================================================================================================>
-      ![Ausgabe](./screenshot_direngine.PNG)
+      ![Ausgabe](.screenshot_direngine.PNG)
