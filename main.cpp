@@ -1,7 +1,6 @@
 #include <iostream> //for std input/output
 #include <regex>
 #include<string> // for string class
-#include <conio.h>
 
 using namespace std;
 
@@ -271,14 +270,18 @@ int identifyCommand(string ch) {
             cout << "Invalid File Name:" << argument << endl;
             return 1;
         }
-        cout << "enter data for the file:" << endl;
+        //Clear input buffer
+        cin.sync();
+        cin.clear();
+        //--------------------
+        cout << "Enter data for the file:" << endl;
         string data;
-        getchar();
-        getline(cin,data);
+        //getchar();
+        getline(cin, data);
         createFile(argument, data);
         return 1;
     } else if (ch == "rm") {
-        cin >> argument ;
+        cin >> argument;
         removeFile(argument);
         return 1;
     } else if (ch == "exit") {
@@ -286,6 +289,19 @@ int identifyCommand(string ch) {
     } else if (ch == "cat") {
         cin >> argument;
         catCommand(argument);//function to get contents of a file
+        return 1;
+    } else if (ch == "help") {
+        cout << "---------------------- All supported commands -----------------------------\n\n"
+                "ls                \tLists directories and files under current directory\n"
+                "cd <path />       \tChange directory to child directory\n"
+                "cd ..             \tChange directory to its parent\n"
+                "mkdir <dir-name>  \tCreate directory under current directory with name specified\n"
+                "rmdir <dir-name>  \tRemove the directory under current directory with the name specified\n"
+                "rm <file>         \tRemove a file in current directory\n"
+                "touch <file-name> \tCreate a file with name specified under current directory\n"
+                "cat <file-name>   \tDisplay content of the file specified\n"
+                "---------------------------------------------------------------------------\n\n"
+             << endl;
         return 1;
     } else {
         cout << "Invalid command " << ch << "!" << endl;
@@ -304,10 +320,10 @@ int main() {
     string command;
 
     while (true) {
-        //cin.clear();
-        //cin.ignore(INT_MAX, '\n');
-        cin.sync();//clear the buffer
-        cin.clear();// TODO flush the input stream
+        //clear the buffer
+        cin.sync();
+        cin.clear();
+        //----------------
 
         cout << current_dir->getPath() << " >";
         cin >> command;
@@ -322,10 +338,10 @@ int main() {
 
 #pragma clang diagnostic pop
 
-/** ls
- * cd <path />
- *  cd ..
- *  mkdir <dir-name>
- *  rmdir <dir-name>
- *  rm <file>
- *  mkfile <file-name> / touch <file-name>*/
+/** ls ------ Lists directories and files under current directory
+ * cd <path />  ------ Change directory to child directory
+ *  cd ..       ------ Change directory to its parent
+ *  mkdir <dir-name>  ------- Create directory under current directory with name specified
+ *  rmdir <dir-name>  ------- Remove the directory under current directory with the name specified
+ *  rm <file> ------- Remove a file in current directory
+ *  touch <file-name> ------- Create a file with name specified under current directory */
