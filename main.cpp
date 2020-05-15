@@ -72,7 +72,7 @@ public:
     static void list(Directory *dir) {
         if (dir->child_dir) {
             Directory *dirHead = dir->child_dir;
-            cout << "Sub-directories" << endl;
+            cout << "Sub-directories:" << endl;
             while (dirHead) {
                 string dir_name = dirHead->name;
                 cout << "\t" << dir_name << endl;
@@ -80,7 +80,7 @@ public:
             }
         }
         if (dir->child_file) {
-            cout << "Files" << endl;
+            cout << "Files:" << endl;
             File *file = (dir->child_file);
             while (file) {
                 string file_name = file->name;
@@ -315,8 +315,6 @@ int identifyCommand(string ch) {
 
 
 int main() {
-
-    //Creating root directory with parent as null
     string command;
 
     while (true) {

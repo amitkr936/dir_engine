@@ -14,7 +14,8 @@ to do the following:</strong></br>
 >> touch -> Create File</br>
 >> cd -> change directory</br>
 >> rmdir -> remove directory</br>
->> rm -> remove file
+>> rm -> remove file</br>
+>> ls -> List all subdirectories and files under working directory
 
                                                      #### Output
  ![Ausgabe](https://user-images.githubusercontent.com/23555312/81896358-18cd4d00-95d2-11ea-9526-bfdde30dd6da.PNG)
